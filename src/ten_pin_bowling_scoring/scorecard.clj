@@ -21,6 +21,14 @@
   [rolls]
   (= 10 (first rolls)))
 
+(defn spare?
+  "Returns true if rolls is a spare, otherwise false."
+  [rolls]
+  (and
+    (<= 2 (count rolls) 3)
+    (= 10 (+ (first rolls)
+             (second rolls)))))
+
 (defn score
   "Returns a new map representing a ten pin bowling scorecard with the rolls for
    a single frame 'added' and frames' scores recalculated. If the game is over a
@@ -60,7 +68,7 @@
                                      ;; Strike is not complete yet, so does not have a score.
                                      {:rolls frame-rolls})))
 
-                               (= 10 frame-score)
+                               (spare? frame-rolls)
                                (if (and (= 9 index)
                                         (second frame-rolls)
                                         (nth frame-rolls 2 nil))
