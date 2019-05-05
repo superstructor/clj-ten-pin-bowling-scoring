@@ -52,7 +52,10 @@
             :score  28}
            (reduce scorecard/score (scorecard/create) (into [[10] [5 4]] (repeat 8 [0 0]))))
         "a full game of one strike followed by a five, then a four and subsequently gutter balls
-         has a total score of twenty eight"))
+         has a total score of twenty eight")
+    (is (= {:frames [{:rolls [10]}]}
+           (reduce scorecard/score (scorecard/create) [[10]]))
+        "a partial game does not have a total score nor a score for an incomplete frame"))
   (testing "a perfect game"
     (is (= {:frames (-> (repeat 9 {:rolls [10]
                                    :score 30})
