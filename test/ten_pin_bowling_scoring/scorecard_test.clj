@@ -56,6 +56,12 @@
     (is (not (scorecard/spare? [10]))
         "a strike")))
 
+(deftest last-frame?
+  (testing "true if index of last frame"
+    (is (scorecard/last-frame? 9)))
+  (testing "false if not index of last frame"
+    (is (not (scorecard/last-frame? 8)))))
+
 (deftest score-frame
   (testing "a gutter frame"
     (is (= {:rolls [0 0]
