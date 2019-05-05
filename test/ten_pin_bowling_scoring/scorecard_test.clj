@@ -119,7 +119,10 @@
           "can not keep rolling balls in a game that is over!"))
     (let [e (reduce scorecard/score (scorecard/create) [[10 10]])]
       (is (and (ex-data e)
-               (= (.getMessage e) "Cannot roll after strike in the same frame unless last frame.")))))
+               (= (.getMessage e) "Cannot roll after strike in the same frame unless last frame."))))
+    (let [e (reduce scorecard/score (scorecard/create) [[5 5 10]])]
+      (is (and (ex-data e)
+               (= (.getMessage e) "Cannot roll after spare in the same frame unless last frame.")))))
   (testing "a gutter game"
     (is (= {:frames (repeat 2 {:rolls [0 0]
                                :score 0})}
