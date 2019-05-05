@@ -16,5 +16,6 @@
                :score frame-score}
         frames (conj (:frames scorecard) frame)
         score (reduce + (map :score frames))]
-    {:frames frames
-     :score  score}))
+    (cond-> {:frames frames}
+            (= 10 (count frames))
+            (assoc :score score))))
