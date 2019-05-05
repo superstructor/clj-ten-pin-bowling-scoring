@@ -34,6 +34,11 @@
   [index]
   (= 9 index))
 
+(defn third
+  "Like (first (nnext x))."
+  [coll]
+  (nth coll 2 nil))
+
 (defn score-strike
   "Returns a new map representing a single frame's rolls and score that is a
    strike in a game of ten pin bowling. Uses index to look forward in all-rolls
@@ -41,7 +46,7 @@
   [all-rolls index rolls]
   (if (and (last-frame? index)
            (second rolls)
-           (nth rolls 2 nil))
+           (third rolls))
     ;; Strike in last frame...
     {:rolls rolls
      :score (reduce + rolls)}
@@ -63,7 +68,7 @@
   [all-rolls index rolls]
   (if (and (last-frame? index)
            (second rolls)
-           (nth rolls 2 nil))
+           (third rolls))
     ;; Spare in last frame...)
     {:rolls rolls
      :score (reduce + rolls)}
