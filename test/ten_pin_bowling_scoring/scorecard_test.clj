@@ -41,4 +41,15 @@
             :score  28}
            (reduce scorecard/score (scorecard/create) (into [[5 5] [9 0]] (repeat 8 [0 0]))))
         "a full game of one spare followed by nine followed by gutter balls has a total score of
-         twenty eight")))
+         twenty eight"))
+  (testing "a game containing a strike"
+    (is (= {:frames (into [{:rolls [10]
+                            :score 19}
+                           {:rolls [5 4]
+                            :score 9}]
+                          (repeat 8 {:rolls [0 0]
+                                     :score 0}))
+            :score  28}
+           (reduce scorecard/score (scorecard/create) (into [[10] [5 4]] (repeat 8 [0 0]))))
+        "a full game of one strike followed by a five, then a four and subsequently gutter balls
+         has a total score of twenty eight")))
