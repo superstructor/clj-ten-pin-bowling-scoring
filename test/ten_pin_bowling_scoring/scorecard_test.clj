@@ -62,6 +62,11 @@
   (testing "false if not index of last frame"
     (is (not (scorecard/last-frame? 8)))))
 
+(deftest third
+  (testing "like (first (nnext x))..."
+    (is (nil? (scorecard/third [1 2])))
+    (is (= 3 (scorecard/third [1 2 3 4])))))
+
 (deftest score-strike
   (testing "an incomplete strike"
     (is (= {:rolls [10]}
