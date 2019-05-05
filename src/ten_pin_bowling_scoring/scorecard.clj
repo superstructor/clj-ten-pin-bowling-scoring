@@ -11,6 +11,11 @@
   [frames]
   (reduce + (map :score frames)))
 
+(defn over?
+  "Returns true if all frames have been thrown, otherwise false."
+  [{:keys [frames] :as scorecard}]
+  (= 10 (count frames)))
+
 (defn score
   "Returns a new map representing a ten pin bowling scorecard with the rolls for
    a single frame 'added' and frames' scores recalculated. If the game is over a
@@ -57,7 +62,8 @@
                              :open-frame
                              {:rolls frame-rolls
                               :score frame-score}))))
-                     (vec))]
-    (cond-> {:frames frames'}
-            (= 10 (count frames'))
+                     (vec))
+        scorecard' {:frames frames'}]
+    (cond-> scorecard'
+            (over? scorecard')
             (assoc :score (total frames')))))
