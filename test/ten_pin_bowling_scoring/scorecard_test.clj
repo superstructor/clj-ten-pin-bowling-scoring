@@ -30,4 +30,15 @@
                                 :score 2})
             :score  20}
            (reduce scorecard/score (scorecard/create) (repeat 10 [1 1])))
-        "a full game has a total score of twenty and all frame scores are two")))
+        "a full game has a total score of twenty and all frame scores are two"))
+  (testing "a game containing a spare"
+    (is (= {:frames (into [{:rolls [5 5]
+                            :score 19}
+                           {:rolls [9 0]
+                            :score 9}]
+                          (repeat 8 {:rolls [0 0]
+                                     :score 0}))
+            :score  28}
+           (reduce scorecard/score (scorecard/create) (into [[5 5] [9 0]] (repeat 8 [0 0]))))
+        "a full game of one spare followed by nine followed by gutter balls has a total score of
+         twenty eight")))
