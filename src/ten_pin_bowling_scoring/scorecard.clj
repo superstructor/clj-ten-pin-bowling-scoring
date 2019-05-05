@@ -34,30 +34,37 @@
   [index]
   (= 9 index))
 
+(defn score-strike
+  "Returns a new map representing a single frame's rolls and score that is a
+   strike in a game of ten pin bowling. Uses index to look forward in all-rolls
+   to determine the full value of the strike, if possible."
+  [all-rolls index rolls]
+  (if (and (last-frame? index)
+           (second rolls)
+           (nth rolls 2 nil))
+    ;; Strike in last frame...
+    {:rolls rolls
+     :score (reduce + rolls)}
+    (let [next-rolls (nth all-rolls (inc index) nil)
+          nnext-rolls (nth all-rolls (inc (inc index)) nil)
+          second-roll (first next-rolls)
+          third-roll (or (second next-rolls) (first nnext-rolls))]
+      (if (and second-roll third-roll)
+        ;; Strike is 10 + next two rolls.
+        {:rolls rolls
+         :score (+ 10 second-roll third-roll)}
+        ;; Strike is not complete yet, so does not have a score.
+        {:rolls rolls}))))
+
 (defn score-frame
   "Returns a new map representing a single frame's rolls and score in a game of
    ten pin bowling. For strikes and spares uses index to look forward in
-   all-rolls to determine the full value."
+   all-rolls to determine the full value, if possible."
   [all-rolls index rolls]
   (let [frame-score (reduce + rolls)]
     (cond
       (strike? rolls)
-      (if (and (last-frame? index)
-               (second rolls)
-               (nth rolls 2 nil))
-        ;; Strike in last frame...
-        {:rolls rolls
-         :score frame-score}
-        (let [next-rolls (nth all-rolls (inc index) nil)
-              nnext-rolls (nth all-rolls (inc (inc index)) nil)
-              second-ball (first next-rolls)
-              third-ball (or (second next-rolls) (first nnext-rolls))]
-          (if (and second-ball third-ball)
-            ;; Strike is 10 + next two rolls.
-            {:rolls rolls
-             :score (+ 10 second-ball third-ball)}
-            ;; Strike is not complete yet, so does not have a score.
-            {:rolls rolls})))
+      (score-strike all-rolls index rolls)
 
       (spare? rolls)
       (if (and (last-frame? index)
