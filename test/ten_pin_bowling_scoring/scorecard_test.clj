@@ -44,6 +44,18 @@
     (is (not (scorecard/strike? [9])))
     (is (not (scorecard/strike? [7 3])))))
 
+(deftest spare?-test
+  (testing "true if rolls is a spare"
+    (is (scorecard/spare? [5 5])
+        "not the last frame")
+    (is (scorecard/spare? [5 5 10])
+        "last frame"))
+  (testing "false if rolls is not a spare"
+    (is (not (scorecard/spare? [0 0]))
+        "gutter balls")
+    (is (not (scorecard/spare? [10]))
+        "a strike")))
+
 (deftest score-test
   (testing "invalid arguments"
     (let [e (reduce scorecard/score (scorecard/create) (repeat 11 [0 0]))]
