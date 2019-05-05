@@ -14,20 +14,34 @@
   (let [frames-rolls (conj (mapv :rolls (:frames scorecard))
                            rolls)
         frames (->> frames-rolls
-                   (map-indexed
-                     (fn [index frame-rolls]
-                       (let [frame-score (reduce + frame-rolls)]
-                         (if (= 10 frame-score)
-                           (if-let [next-rolls (nth frames-rolls (inc index) nil)]
-                             ;; Spare is 10 + first roll of next frame.
-                             {:rolls frame-rolls
-                              :score (+ 10 (first next-rolls))}
-                             ;; Spare is not complete yet, so does not have a score.
-                             {:rolls frame-rolls})
-                           ;; Not a spare...
-                           {:rolls frame-rolls
-                            :score frame-score}))))
-                   (vec))]
+                    (map-indexed
+                      (fn [index frame-rolls]
+                        (let [frame-score (reduce + frame-rolls)]
+                          (cond
+                            (= 10 (first frame-rolls))
+                            (let [next-rolls (nth frames-rolls (inc index) nil)
+                                  nnext-rolls (nth frames-rolls (inc (inc index)) nil)
+                                  second-ball (first next-rolls)
+                                  third-ball (or (second next-rolls) (first nnext-rolls))]
+                              (if (and second-ball third-ball)
+                                ;; Strike is 10 + next two rolls.
+                                {:rolls frame-rolls
+                                 :score (+ 10 second-ball third-ball)}
+                                ;; Strike is not complete yet, so does not have a score.
+                                {:rolls frame-rolls}))
+
+                            (= 10 frame-score)
+                            (if-let [next-rolls (nth frames-rolls (inc index) nil)]
+                              ;; Spare is 10 + first roll of next frame.
+                              {:rolls frame-rolls
+                               :score (+ 10 (first next-rolls))}
+                              ;; Spare is not complete yet, so does not have a score.
+                              {:rolls frame-rolls})
+
+                            :open-frame
+                            {:rolls frame-rolls
+                             :score frame-score}))))
+                    (vec))]
     (cond-> {:frames frames}
             (= 10 (count frames))
             (assoc :score (reduce + (map :score frames))))))
