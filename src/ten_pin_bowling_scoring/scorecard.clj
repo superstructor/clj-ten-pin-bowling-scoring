@@ -113,7 +113,12 @@
          (spare? rolls)
          (< 2 (count rolls)))
     (ex-info "Cannot roll after spare in the same frame unless last frame." {})
-    
+
+    (and (last-frame? (count frames))
+         (or (strike? rolls) (spare? rolls))
+         (not= 3 (count rolls)))
+    (ex-info "Must roll three balls in the last frame if it is a strike or spare." {})
+
     :default
     (let [all-rolls (conj (mapv :rolls frames) rolls)
           frames' (->> all-rolls
