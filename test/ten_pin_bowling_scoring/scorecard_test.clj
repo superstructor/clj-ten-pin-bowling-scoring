@@ -126,7 +126,10 @@
     (let [e (reduce scorecard/score (scorecard/create) (concat (repeat 9 [10])
                                                              [[10 10]]))]
       (is (and (ex-data e)
-               (= (.getMessage e) "Must roll three balls in the last frame if it is a strike or spare.")))))
+               (= (.getMessage e) "Must roll three balls in the last frame if it is a strike or spare."))))
+    (let [e (reduce scorecard/score (scorecard/create) [[5 5] [5 5] [3]])]
+      (is (and (ex-data e)
+               (= (.getMessage e) "Must roll two balls unless a strike in any frame or a spare in the last frame.")))))
   (testing "a gutter game"
     (is (= {:frames (repeat 2 {:rolls [0 0]
                                :score 0})}
