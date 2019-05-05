@@ -12,6 +12,10 @@
 
 (deftest score-test
   (testing "a gutter game"
+    (is (= {:frames (repeat 2 {:rolls [0 0]
+                               :score 0})}
+           (reduce scorecard/score (scorecard/create) (repeat 2 [0 0])))
+        "a partial game does not have a total score and all frame scores are zero")
     (is (= {:frames (repeat 10 {:rolls [0 0]
                                 :score 0})
             :score  0}
