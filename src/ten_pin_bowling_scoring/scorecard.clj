@@ -56,33 +56,39 @@
         ;; Strike is not complete yet, so does not have a score.
         {:rolls rolls}))))
 
+(defn score-spare
+  "Returns a new map representing a single frame's rolls and score that is a
+   spare in a game of ten pin bowling. Uses index to look forward in all rolls
+   to determine the full value of the spare, if possible."
+  [all-rolls index rolls]
+  (if (and (last-frame? index)
+           (second rolls)
+           (nth rolls 2 nil))
+    ;; Spare in last frame...)
+    {:rolls rolls
+     :score (reduce + rolls)}
+    (if-let [next-rolls (nth all-rolls (inc index) nil)]
+      ;; Spare is 10 + first roll of next frame.
+      {:rolls rolls
+       :score (+ 10 (first next-rolls))}
+      ;; Spare is not complete yet, so does not have a score.
+      {:rolls rolls})))
+
 (defn score-frame
   "Returns a new map representing a single frame's rolls and score in a game of
    ten pin bowling. For strikes and spares uses index to look forward in
    all-rolls to determine the full value, if possible."
   [all-rolls index rolls]
-  (let [frame-score (reduce + rolls)]
-    (cond
-      (strike? rolls)
-      (score-strike all-rolls index rolls)
+  (cond
+    (strike? rolls)
+    (score-strike all-rolls index rolls)
 
-      (spare? rolls)
-      (if (and (last-frame? index)
-               (second rolls)
-               (nth rolls 2 nil))
-        ;; Spare in last frame...)
-        {:rolls rolls
-         :score frame-score}
-        (if-let [next-rolls (nth all-rolls (inc index) nil)]
-          ;; Spare is 10 + first roll of next frame.
-          {:rolls rolls
-           :score (+ 10 (first next-rolls))}
-          ;; Spare is not complete yet, so does not have a score.
-          {:rolls rolls}))
+    (spare? rolls)
+    (score-spare all-rolls index rolls)
 
-      :open-frame
-      {:rolls rolls
-       :score frame-score})))
+    :open-frame
+    {:rolls rolls
+     :score (reduce + rolls)}))
 
 (defn score
   "Returns a new map representing a ten pin bowling scorecard with the rolls for
