@@ -52,4 +52,13 @@
             :score  28}
            (reduce scorecard/score (scorecard/create) (into [[10] [5 4]] (repeat 8 [0 0]))))
         "a full game of one strike followed by a five, then a four and subsequently gutter balls
-         has a total score of twenty eight")))
+         has a total score of twenty eight"))
+  (testing "a perfect game"
+    (is (= {:frames (-> (repeat 9 {:rolls [10]
+                                   :score 30})
+                        (vec)
+                        (conj {:rolls [10 10 10]
+                               :score 30}))
+            :score 300}
+           (reduce scorecard/score (scorecard/create) (concat (repeat 9 [10]) [[10 10 10]])))
+        "a full game has a total score of three hundred and all frame scores are thirty")))
