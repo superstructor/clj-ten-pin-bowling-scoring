@@ -29,6 +29,11 @@
     (= 10 (+ (first rolls)
              (second rolls)))))
 
+(defn last-frame?
+  "Returns true if zero-based index of last frame (i.e. 9), otherwise false."
+  [index]
+  (= 9 index))
+
 (defn score-frame
   "Returns a new map representing a single frame's rolls and score in a game of
    ten pin bowling. For strikes and spares uses index to look forward in
@@ -37,7 +42,7 @@
   (let [frame-score (reduce + rolls)]
     (cond
       (strike? rolls)
-      (if (and (= 9 index)
+      (if (and (last-frame? index)
                (second rolls)
                (nth rolls 2 nil))
         ;; Strike in last frame...
@@ -55,7 +60,7 @@
             {:rolls rolls})))
 
       (spare? rolls)
-      (if (and (= 9 index)
+      (if (and (last-frame? index)
                (second rolls)
                (nth rolls 2 nil))
         ;; Spare in last frame...)
@@ -81,7 +86,7 @@
     (over? scorecard)
     (ex-info "Game is already over!" {})
 
-    (and (not= 9 (count frames))
+    (and (not (last-frame? (count frames)))
          (strike? rolls)
          (< 1 (count rolls)))
     (ex-info "Cannot roll after strike in the same frame unless last frame." {})
