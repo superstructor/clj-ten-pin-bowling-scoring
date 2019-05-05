@@ -79,6 +79,23 @@
             :score 30}
            (scorecard/score-strike [[10] [10] [10]] 0 [10])))))
 
+(deftest score-spare
+  (testing "an incomplete spare"
+    (is (= {:rolls [5 5]}
+           (scorecard/score-spare [[5 5]] 0 [5 5]))))
+  (testing "a spare followed by gutter balls"
+    (is (= {:rolls [5 5]
+            :score 10}
+           (scorecard/score-spare [[5 5] [0 0]] 0 [5 5]))))
+  (testing "a spare followed by a spare"
+    (is (= {:rolls [5 5]
+            :score 15}
+           (scorecard/score-spare [[5 5] [5 5]] 0 [5 5]))))
+  (testing "a spare followed by a strike"
+    (is (= {:rolls [5 5]
+            :score 20}
+           (scorecard/score-spare [[5 5] [10]] 0 [5 5])))))
+
 (deftest score-frame
   (testing "a gutter frame"
     (is (= {:rolls [0 0]
