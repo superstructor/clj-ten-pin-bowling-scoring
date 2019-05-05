@@ -10,6 +10,13 @@
     (is (= {:frames []}
            (scorecard/create)))))
 
+(deftest total-test
+  (testing "sum of the frames' scores"
+    (is (zero? (scorecard/total (repeat 10 {:rolls [0 0] :score 0})))
+        "zero for a gutter game")
+    (is (= 20 (scorecard/total (repeat 10 {:rolls [1 1] :score 2})))
+        "twenty for a game of ones")))
+
 (deftest score-test
   (testing "a gutter game"
     (is (= {:frames (repeat 2 {:rolls [0 0]
