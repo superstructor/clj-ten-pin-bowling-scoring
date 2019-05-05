@@ -62,6 +62,23 @@
   (testing "false if not index of last frame"
     (is (not (scorecard/last-frame? 8)))))
 
+(deftest score-strike
+  (testing "an incomplete strike"
+    (is (= {:rolls [10]}
+           (scorecard/score-strike [[10]] 0 [10]))))
+  (testing "a strike followed by gutter balls"
+    (is (= {:rolls [10]
+            :score 10}
+           (scorecard/score-strike [[10] [0 0]] 0 [10]))))
+  (testing "a strike followed by a spare"
+    (is (= {:rolls [10]
+            :score 20}
+           (scorecard/score-strike [[10] [5 5]] 0 [10]))))
+  (testing "a strike followed by strikes"
+    (is (= {:rolls [10]
+            :score 30}
+           (scorecard/score-strike [[10] [10] [10]] 0 [10])))))
+
 (deftest score-frame
   (testing "a gutter frame"
     (is (= {:rolls [0 0]
