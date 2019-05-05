@@ -41,7 +41,10 @@
             :score  28}
            (reduce scorecard/score (scorecard/create) (into [[5 5] [9 0]] (repeat 8 [0 0]))))
         "a full game of one spare followed by nine followed by gutter balls has a total score of
-         twenty eight"))
+         twenty eight")
+    (is (= {:frames [{:rolls [5 5]}]}
+           (reduce scorecard/score (scorecard/create) [[5 5]]))
+        "a partial game does not have a total score nor a score for an incomplete frame"))
   (testing "a game containing a strike"
     (is (= {:frames (into [{:rolls [10]
                             :score 19}
