@@ -124,6 +124,11 @@
          (not= 2 (count rolls)))
     (ex-info "Must roll two balls unless a strike in any frame or a spare in the last frame." {})
 
+    (let [sum (reduce + rolls)]
+      (and (not (last-frame? (count frames)))
+        (not (<= 0 sum 10))))
+    (ex-info "Sum of rolls in a frame must be in the range of 0 to 10. There are only 10 pins!" {})
+
     :default
     (let [all-rolls (conj (mapv :rolls frames) rolls)
           frames' (->> all-rolls
