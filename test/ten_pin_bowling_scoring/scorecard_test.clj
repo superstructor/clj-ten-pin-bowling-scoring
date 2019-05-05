@@ -20,4 +20,14 @@
                                 :score 0})
             :score  0}
            (reduce scorecard/score (scorecard/create) (repeat 10 [0 0])))
-        "a full game has a total score of zero and all frame scores are zero")))
+        "a full game has a total score of zero and all frame scores are zero"))
+  (testing "a game of ones"
+    (is (= {:frames (repeat 2 {:rolls [1 1]
+                               :score 2})}
+           (reduce scorecard/score (scorecard/create) (repeat 2 [1 1])))
+        "a partial game does not have a total score and all frame scores are two")
+    (is (= {:frames (repeat 10 {:rolls [1 1]
+                                :score 2})
+            :score  20}
+           (reduce scorecard/score (scorecard/create) (repeat 10 [1 1])))
+        "a full game has a total score of twenty and all frame scores are two")))
