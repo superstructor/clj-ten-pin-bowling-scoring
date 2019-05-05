@@ -11,11 +11,23 @@
    a single frame 'added' and frames' scores recalculated. If the game is over a
    final score will also be provided."
   [scorecard rolls]
-  (let [frame-score (reduce + rolls)
-        frame {:rolls rolls
-               :score frame-score}
-        frames (conj (:frames scorecard) frame)
-        score (reduce + (map :score frames))]
+  (let [frames-rolls (conj (mapv :rolls (:frames scorecard))
+                           rolls)
+        frames (->> frames-rolls
+                   (map-indexed
+                     (fn [index frame-rolls]
+                       (let [frame-score (reduce + frame-rolls)]
+                         (if (= 10 frame-score)
+                           (if-let [next-rolls (nth frames-rolls (inc index) nil)]
+                             ;; Spare is 10 + first roll of next frame.
+                             {:rolls frame-rolls
+                              :score (+ 10 (first next-rolls))}
+                             ;; Spare is not complete yet, so does not have a score.
+                             {:rolls frame-rolls})
+                           ;; Not a spare...
+                           {:rolls frame-rolls
+                            :score frame-score}))))
+                   (vec))]
     (cond-> {:frames frames}
             (= 10 (count frames))
-            (assoc :score score))))
+            (assoc :score (reduce + (map :score frames))))))
