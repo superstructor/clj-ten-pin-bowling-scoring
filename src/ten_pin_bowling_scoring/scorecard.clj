@@ -6,6 +6,11 @@
   []
   {:frames []})
 
+(defn total
+  "Returns the sum of all the frames' scores."
+  [frames]
+  (reduce + (map :score frames)))
+
 (defn score
   "Returns a new map representing a ten pin bowling scorecard with the rolls for
    a single frame 'added' and frames' scores recalculated. If the game is over a
@@ -56,4 +61,4 @@
                     (vec))]
     (cond-> {:frames frames}
             (= 10 (count frames))
-            (assoc :score (reduce + (map :score frames))))))
+            (assoc :score (total frames)))))
