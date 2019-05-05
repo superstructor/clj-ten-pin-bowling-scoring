@@ -37,6 +37,13 @@
                        (repeat 9 [10]))))
         "a near-perfect game")))
 
+(deftest strike?-test
+  (testing "true if rolls is a strike"
+    (is (scorecard/strike? [10])))
+  (testing "false if rolls is not a strike"
+    (is (not (scorecard/strike? [9])))
+    (is (not (scorecard/strike? [7 3])))))
+
 (deftest score-test
   (testing "invalid arguments"
     (let [e (reduce scorecard/score (scorecard/create) (repeat 11 [0 0]))]
