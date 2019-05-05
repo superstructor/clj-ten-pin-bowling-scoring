@@ -16,6 +16,11 @@
   [{:keys [frames] :as scorecard}]
   (= 10 (count frames)))
 
+(defn strike?
+  "Returns true if rolls is a strike, otherwise false."
+  [rolls]
+  (= 10 (first rolls)))
+
 (defn score
   "Returns a new map representing a ten pin bowling scorecard with the rolls for
    a single frame 'added' and frames' scores recalculated. If the game is over a
@@ -26,7 +31,7 @@
     (ex-info "Game is already over!" {})
 
     (and (not= 9 (count frames))
-         (= 10 (first rolls))
+         (strike? rolls)
          (< 1 (count rolls)))
     (ex-info "Cannot roll after strike in the same frame unless last frame." {})
 
@@ -37,7 +42,7 @@
                          (fn [index frame-rolls]
                            (let [frame-score (reduce + frame-rolls)]
                              (cond
-                               (= 10 (first frame-rolls))
+                               (strike? frame-rolls)
                                (if (and (= 9 index)
                                         (second frame-rolls)
                                         (nth frame-rolls 2 nil))
