@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/superstructor/clj-ten-pin-bowling-scoring.svg?style=svg)](https://circleci.com/gh/superstructor/clj-ten-pin-bowling-scoring)
 [![GitHub license](https://img.shields.io/github/license/superstructor/clj-ten-pin-bowling-scoring.svg)](LICENSE.txt)
 
 # Ten pin bowling scoring
