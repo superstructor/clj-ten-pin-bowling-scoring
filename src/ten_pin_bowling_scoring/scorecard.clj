@@ -25,6 +25,11 @@
     (over? scorecard)
     (ex-info "Game is already over!" {})
 
+    (and (not= 9 (count frames))
+         (= 10 (first rolls))
+         (< 1 (count rolls)))
+    (ex-info "Cannot roll after strike in the same frame unless last frame." {})
+
     :default
     (let [frames-rolls (conj (mapv :rolls frames) rolls)
           frames' (->> frames-rolls
