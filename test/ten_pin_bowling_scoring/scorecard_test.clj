@@ -38,6 +38,9 @@
         "a near-perfect game")))
 
 (deftest score-test
+  (testing "invalid arguments"
+    (is (ex-data (reduce scorecard/score (scorecard/create) (repeat 11 [0 0])))
+        "can not keep rolling balls in a game that is over!"))
   (testing "a gutter game"
     (is (= {:frames (repeat 2 {:rolls [0 0]
                                :score 0})}
