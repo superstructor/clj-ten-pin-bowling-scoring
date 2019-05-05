@@ -44,7 +44,15 @@
          twenty eight")
     (is (= {:frames [{:rolls [5 5]}]}
            (reduce scorecard/score (scorecard/create) [[5 5]]))
-        "a partial game does not have a total score nor a score for an incomplete frame"))
+        "a partial game does not have a total score nor a score for an incomplete frame")
+    (is (= {:frames (concat
+                      (repeat 9 {:rolls [5 4]
+                                 :score 9})
+                      [{:rolls [5 5 5]
+                        :score 15}])
+            :score  96}
+           (reduce scorecard/score (scorecard/create) (concat (repeat 9 [5 4]) [[5 5 5]])))
+        "a full game of open frames followed by a spare in the last frame"))
   (testing "a game containing a strike"
     (is (= {:frames (into [{:rolls [10]
                             :score 19}
@@ -65,6 +73,6 @@
                         (vec)
                         (conj {:rolls [10 10 10]
                                :score 30}))
-            :score 300}
+            :score  300}
            (reduce scorecard/score (scorecard/create) (concat (repeat 9 [10]) [[10 10 10]])))
         "a full game has a total score of three hundred and all frame scores are thirty")))
