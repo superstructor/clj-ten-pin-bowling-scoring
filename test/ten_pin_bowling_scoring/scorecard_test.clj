@@ -17,6 +17,26 @@
     (is (= 20 (scorecard/total (repeat 10 {:rolls [1 1] :score 2})))
         "twenty for a game of ones")))
 
+(deftest over?-test
+  (testing "true if the game is over"
+    (is (scorecard/over?
+          (reduce scorecard/score (scorecard/create)
+                  (repeat 10 [0 0])))
+        "a gutter game")
+    (is (scorecard/over?
+          (reduce scorecard/score (scorecard/create)
+                  (concat (repeat 9 [10]) [[10 10 10]])))
+        "a perfect game"))
+  (testing "false if the game is under"
+    (is (not (scorecard/over?
+               (reduce scorecard/score (scorecard/create)
+                       (repeat 9 [0 0]))))
+        "a gutter game")
+    (is (not (scorecard/over?
+               (reduce scorecard/score (scorecard/create)
+                       (repeat 9 [10]))))
+        "a near-perfect game")))
+
 (deftest score-test
   (testing "a gutter game"
     (is (= {:frames (repeat 2 {:rolls [0 0]
