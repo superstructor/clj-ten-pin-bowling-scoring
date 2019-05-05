@@ -1,3 +1,5 @@
+[![GitHub license](https://img.shields.io/github/license/superstructor/clj-ten-pin-bowling-scoring.svg)](LICENSE.txt)
+
 # Ten pin bowling scoring
 
 > "I saw this college team bowling championship. Each team had their own coach. What kind of 
