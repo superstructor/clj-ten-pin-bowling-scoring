@@ -56,6 +56,16 @@
     (is (not (scorecard/spare? [10]))
         "a strike")))
 
+(deftest score-frame
+  (testing "a gutter frame"
+    (is (= {:rolls [0 0]
+            :score 0}
+           (scorecard/score-frame [[0 0]] 0 [0 0]))))
+  (testing "a strike frame"
+    (is (= {:rolls [10]
+            :score 15}
+           (scorecard/score-frame [[10] [3 2]] 0 [10])))))
+
 (deftest score-test
   (testing "invalid arguments"
     (let [e (reduce scorecard/score (scorecard/create) (repeat 11 [0 0]))]
