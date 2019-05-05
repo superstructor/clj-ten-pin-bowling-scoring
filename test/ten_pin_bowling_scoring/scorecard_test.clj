@@ -9,3 +9,11 @@
   (testing "creates an empty scorecard"
     (is (= {:frames []}
            (scorecard/create)))))
+
+(deftest score-test
+  (testing "a gutter game"
+    (is (= {:frames (repeat 10 {:rolls [0 0]
+                                :score 0})
+            :score  0}
+           (reduce scorecard/score (scorecard/create) (repeat 10 [0 0])))
+        "a full game has a total score of zero and all frame scores are zero")))
