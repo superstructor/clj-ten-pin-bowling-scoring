@@ -99,34 +99,35 @@
   "Returns an instance of ExceptionInfo if 'adding' rolls to scorecard would be
    an invalid game state, otherwise nil."
   [{:keys [frames] :as scorecard} rolls]
-  (cond
-    (over? scorecard)
-    (ex-info "Game is already over!" {})
+  (let [next-index (count frames)]
+    (cond
+      (over? scorecard)
+      (ex-info "Game is already over!" {})
+  
+      (and (not (last-frame? next-index))
+           (strike? rolls)
+           (< 1 (count rolls)))
+      (ex-info "Cannot roll after strike in the same frame unless last frame." {})
 
-    (and (not (last-frame? (count frames)))
-         (strike? rolls)
-         (< 1 (count rolls)))
-    (ex-info "Cannot roll after strike in the same frame unless last frame." {})
+      (and (not (last-frame? next-index))
+           (spare? rolls)
+           (< 2 (count rolls)))
+      (ex-info "Cannot roll after spare in the same frame unless last frame." {})
 
-    (and (not (last-frame? (count frames)))
-         (spare? rolls)
-         (< 2 (count rolls)))
-    (ex-info "Cannot roll after spare in the same frame unless last frame." {})
+      (and (last-frame? next-index)
+           (or (strike? rolls) (spare? rolls))
+           (not= 3 (count rolls)))
+      (ex-info "Must roll three balls in the last frame if it is a strike or spare." {})
 
-    (and (last-frame? (count frames))
-         (or (strike? rolls) (spare? rolls))
-         (not= 3 (count rolls)))
-    (ex-info "Must roll three balls in the last frame if it is a strike or spare." {})
+      (and (not (strike? rolls))
+           (not (and (spare? rolls) (last-frame? next-index)))
+           (not= 2 (count rolls)))
+      (ex-info "Must roll two balls unless a strike in any frame or a spare in the last frame." {})
 
-    (and (not (strike? rolls))
-         (not (and (spare? rolls) (last-frame? (count frames))))
-         (not= 2 (count rolls)))
-    (ex-info "Must roll two balls unless a strike in any frame or a spare in the last frame." {})
-
-    (let [sum (reduce + rolls)]
-      (and (not (last-frame? (count frames)))
-           (not (<= 0 sum 10))))
-    (ex-info "Sum of rolls in a frame must be in the range of 0 to 10. There are only 10 pins!" {})))
+      (let [sum (reduce + rolls)]
+        (and (not (last-frame? next-index))
+             (not (<= 0 sum 10))))
+      (ex-info "Sum of rolls in a frame must be in the range of 0 to 10. There are only 10 pins!" {}))))
 
 (defn score
   "Returns a new map representing a ten pin bowling scorecard with the rolls for
