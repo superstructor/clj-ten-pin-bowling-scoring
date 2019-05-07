@@ -44,40 +44,28 @@
    strike in a game of ten pin bowling. Uses index to look forward in all-rolls
    to determine the full value of the strike, if possible."
   [all-rolls index rolls]
-  (if (and (last-frame? index)
-           (second rolls)
-           (third rolls))
-    ;; Strike in last frame...
-    {:rolls rolls
-     :score (reduce + rolls)}
-    (let [next-rolls (nth all-rolls (inc index) nil)
-          nnext-rolls (nth all-rolls (inc (inc index)) nil)
-          second-roll (first next-rolls)
-          third-roll (or (second next-rolls) (first nnext-rolls))]
-      (if (and second-roll third-roll)
-        ;; Strike is 10 + next two rolls.
-        {:rolls rolls
-         :score (+ 10 second-roll third-roll)}
-        ;; Strike is not complete yet, so does not have a score.
-        {:rolls rolls}))))
+  (let [next-rolls (nth all-rolls (inc index) nil)
+        nnext-rolls (nth all-rolls (inc (inc index)) nil)
+        second-roll (first next-rolls)
+        third-roll (or (second next-rolls) (first nnext-rolls))]
+    (if (and second-roll third-roll)
+      ;; Strike is 10 + next two rolls.
+      {:rolls rolls
+       :score (+ 10 second-roll third-roll)}
+      ;; Strike is not complete yet, so does not have a score.
+      {:rolls rolls})))
 
 (defn score-spare
   "Returns a new map representing a single frame's rolls and score that is a
    spare in a game of ten pin bowling. Uses index to look forward in all rolls
    to determine the full value of the spare, if possible."
   [all-rolls index rolls]
-  (if (and (last-frame? index)
-           (second rolls)
-           (third rolls))
-    ;; Spare in last frame...)
+  (if-let [next-rolls (nth all-rolls (inc index) nil)]
+    ;; Spare is 10 + first roll of next frame.
     {:rolls rolls
-     :score (reduce + rolls)}
-    (if-let [next-rolls (nth all-rolls (inc index) nil)]
-      ;; Spare is 10 + first roll of next frame.
-      {:rolls rolls
-       :score (+ 10 (first next-rolls))}
-      ;; Spare is not complete yet, so does not have a score.
-      {:rolls rolls})))
+     :score (+ 10 (first next-rolls))}
+    ;; Spare is not complete yet, so does not have a score.
+    {:rolls rolls}))
 
 (defn score-frame
   "Returns a new map representing a single frame's rolls and score in a game of
@@ -85,13 +73,16 @@
    all-rolls to determine the full value, if possible."
   [all-rolls index rolls]
   (cond
-    (strike? rolls)
+    (and (strike? rolls)
+         (not (last-frame? index)))
     (score-strike all-rolls index rolls)
 
-    (spare? rolls)
+    (and (spare? rolls)
+         (not (last-frame? index)))
     (score-spare all-rolls index rolls)
 
-    :open-frame
+    ;; Open frame OR last frame
+    :default
     {:rolls rolls
      :score (reduce + rolls)}))
 
@@ -103,7 +94,7 @@
     (cond
       (over? scorecard)
       (ex-info "Game is already over!" {})
-  
+
       (and (not (last-frame? next-index))
            (strike? rolls)
            (< 1 (count rolls)))
