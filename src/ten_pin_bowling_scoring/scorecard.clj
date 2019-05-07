@@ -128,9 +128,8 @@
   (if-let [e (error scorecard rolls)]
     e
     (let [all-rolls (conj (mapv :rolls frames) rolls)
-          frames' (->> all-rolls
-                       (map-indexed (partial score-frame all-rolls))
-                       (vec))
+          f (partial score-frame all-rolls)
+          frames' (->> all-rolls (map-indexed f) (vec))
           scorecard' {:frames frames'}]
       (cond-> scorecard'
               (over? scorecard')
