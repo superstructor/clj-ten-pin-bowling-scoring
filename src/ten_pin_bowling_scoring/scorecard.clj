@@ -95,10 +95,9 @@
     {:rolls rolls
      :score (reduce + rolls)}))
 
-(defn score
-  "Returns a new map representing a ten pin bowling scorecard with the rolls for
-   a single frame 'added' and frames' scores recalculated. If the game is over a
-   final score will also be provided."
+(defn error
+  "Returns an instance of ExceptionInfo if 'adding' rolls to scorecard would be
+   an invalid game state, otherwise nil."
   [{:keys [frames] :as scorecard} rolls]
   (cond
     (over? scorecard)
@@ -126,10 +125,16 @@
 
     (let [sum (reduce + rolls)]
       (and (not (last-frame? (count frames)))
-        (not (<= 0 sum 10))))
-    (ex-info "Sum of rolls in a frame must be in the range of 0 to 10. There are only 10 pins!" {})
+           (not (<= 0 sum 10))))
+    (ex-info "Sum of rolls in a frame must be in the range of 0 to 10. There are only 10 pins!" {})))
 
-    :default
+(defn score
+  "Returns a new map representing a ten pin bowling scorecard with the rolls for
+   a single frame 'added' and frames' scores recalculated. If the game is over a
+   final score will also be provided."
+  [{:keys [frames] :as scorecard} rolls]
+  (if-let [e (error scorecard rolls)]
+    e
     (let [all-rolls (conj (mapv :rolls frames) rolls)
           frames' (->> all-rolls
                        (map-indexed (partial score-frame all-rolls))
